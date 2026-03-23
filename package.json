@@ -1,0 +1,30 @@
+{
+  "name": "automation-web-blog-agi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Automacao E2E com Cypress para a busca de artigos do Blog do Agi.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "npm run cy:run",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:headed": "cypress run --headed",
+    "cy:run:report": "cypress run --reporter cypress-mochawesome-reporter",
+    "report:clean": "node -e \"require('fs').rmSync('cypress/reports',{recursive:true,force:true})\""
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/e2e/step_definitions/**/*.js"
+    ]
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^22.2.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5",
+    "cypress": "^14.4.1",
+    "cypress-mochawesome-reporter": "^3.8.2",
+    "esbuild": "^0.25.2"
+  }
+}
