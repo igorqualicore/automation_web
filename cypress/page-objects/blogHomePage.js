@@ -17,24 +17,33 @@ class BlogHomePage {
   fillSearchField(term) {
     cy.getById(this.selectors.searchField)
       .should('exist')
-      .clear({ force: true });
+      .then(($input) => {
+        const inputElement = $input[0];
 
-    cy.getById(this.selectors.searchField)
-      .should('exist')
-      .type(term, {
-        force: true,
-        delay: 0,
-        parseSpecialCharSequences: false,
+        inputElement.value = '';
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+
+        inputElement.value = term;
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
       });
   }
 
   submitSearch() {
     cy.getById(this.selectors.searchField)
       .should('exist')
-      .parents('form')
-      .first()
-      .should('exist')
-      .submit();
+      .then(($input) => {
+        const formElement = $input[0].form;
+
+        expect(formElement, 'Formulario da busca').to.exist;
+
+        if (typeof formElement.requestSubmit === 'function') {
+          formElement.requestSubmit();
+          return;
+        }
+
+        formElement.submit();
+      });
   }
 
   searchFor(term) {
