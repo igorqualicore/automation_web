@@ -1,5 +1,8 @@
 name: Cypress E2E
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches:
@@ -20,7 +23,7 @@ jobs:
           - windows-latest
           - macos-latest
         node-version:
-          - 20
+          - 22
 
     steps:
       - name: Checkout
