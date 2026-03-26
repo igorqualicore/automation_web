@@ -37,6 +37,8 @@ jobs:
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v7
+        env:
+          REPORT_OS: ${{ matrix.os }}
         with:
           install-command: npm ci
           command: npm run test:ci
@@ -49,3 +51,32 @@ jobs:
           path: |
             cypress/reports/
             cypress/screenshots/
+
+  report:
+    if: always()
+    needs: e2e
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Download all execution artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+          pattern: cypress-artifacts-*
+
+      - name: Build consolidated HTML dashboard
+        run: node scripts/generate-ci-dashboard.js artifacts consolidated-report
+
+      - name: Upload consolidated dashboard
+        uses: actions/upload-artifact@v7
+        with:
+          name: cypress-dashboard-report
+          path: consolidated-report/

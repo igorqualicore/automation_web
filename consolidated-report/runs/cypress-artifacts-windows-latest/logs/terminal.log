@@ -1,0 +1,66 @@
+
+
+DevTools listening on ws://127.0.0.1:55073/devtools/browser/0a0e9905-73c5-467e-b95c-a0fbe3214490
+Couldn't find tsconfig.json. tsconfig-paths will be skipped
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Chrome 146 (headless)                                                          │
+  │ Node Version:   v22.18.0 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          1 found (busca-blog.feature)                                                   │
+  │ Searched:       cypress/e2e/feature/**/*.feature                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Remove output folder C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  busca-blog.feature                                                              (1 of 1)
+
+
+  Busca de artigos do Blog do Agi
+    √ Buscar artigos com um termo existente
+    √ Buscar artigos com um termo sem resultados
+
+
+  2 passing (5s)
+
+[mochawesome] Report JSON saved to C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\.jsons\execution-report.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        2                                                                                │
+  │ Passing:      2                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     busca-blog.feature                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Start generate report process
+Read and merge jsons from "C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\.jsons"
+Enhance report
+Create HTML report
+HTML report successfully created!
+C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\execution-report.html
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  busca-blog.feature                       00:05        2        2        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        00:05        2        2        -        -        -  
+

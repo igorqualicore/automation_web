@@ -158,6 +158,12 @@ Executar a suite padrao:
 npm test
 ```
 
+Executar o mesmo fluxo utilizado na pipeline:
+
+```bash
+npm run test:ci
+```
+
 Observacao:
 
 - Os arquivos .feature ficam em cypress/e2e/feature.
@@ -192,7 +198,14 @@ Ao executar a suite com reporter habilitado, o projeto gera um relatorio HTML em
 cypress/reports/html/execution-report.html
 ```
 
-Esse relatorio pode ser usado como evidencia de execucao para a avaliacao tecnica.
+Na execucao de CI tambem sao gerados os arquivos:
+
+```text
+cypress/reports/ci-metadata.json
+cypress/reports/logs/terminal.log
+```
+
+Esse conjunto permite consolidar status, duracao, evidencias visuais e log bruto da execucao.
 
 ## Pipeline
 
@@ -201,8 +214,27 @@ O projeto possui workflow no GitHub Actions para:
 - executar a suite em Linux, Windows e macOS
 - preservar screenshots de falha
 - publicar artefatos da execucao
+- gerar um dashboard HTML consolidado com os 3 ambientes
 
 Arquivo: .github/workflows/cypress.yml
+
+## Dashboard consolidado da pipeline
+
+Ao final da workflow, a pipeline publica um artefato consolidado com uma visao unica da execucao nos 3 ambientes.
+
+O dashboard apresenta:
+
+- status por ambiente
+- tempo de execucao por ambiente
+- totais de testes aprovados, falhos, pendentes e ignorados
+- link para o relatorio detalhado de cada ambiente
+- link para o log bruto de cada ambiente
+
+Arquivo principal do dashboard:
+
+```text
+consolidated-report/index.html
+```
 
 ## Como avaliar a entrega
 

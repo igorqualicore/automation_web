@@ -1,0 +1,50 @@
+{
+  "environment": "ubuntu-latest",
+  "browserName": "chrome",
+  "browserVersion": "146.0.7680.155",
+  "startedTestsAt": "2026-03-26T18:20:32.405Z",
+  "endedTestsAt": "2026-03-26T18:20:37.906Z",
+  "status": "passed",
+  "totalTests": 2,
+  "totalPassed": 2,
+  "totalFailed": 0,
+  "totalPending": 0,
+  "totalSkipped": 0,
+  "totalSuites": 1,
+  "totalDuration": 5501,
+  "screenshots": 0,
+  "runs": [
+    {
+      "spec": "cypress\\e2e\\feature\\busca-blog.feature",
+      "stats": {
+        "duration": 5501,
+        "endedAt": "2026-03-26T18:20:37.906Z",
+        "failures": 0,
+        "passes": 2,
+        "pending": 0,
+        "skipped": 0,
+        "startedAt": "2026-03-26T18:20:32.405Z",
+        "suites": 1,
+        "tests": 2
+      },
+      "reporterStats": {
+        "suites": 1,
+        "tests": 2,
+        "passes": 2,
+        "pending": 0,
+        "failures": 0,
+        "start": "2026-03-26T18:20:32.409Z",
+        "end": "2026-03-26T18:20:37.907Z",
+        "duration": 5498,
+        "testsRegistered": 2,
+        "passPercent": 100,
+        "pendingPercent": 0,
+        "other": 0,
+        "hasOther": false,
+        "skipped": 0,
+        "hasSkipped": false
+      }
+    }
+  ],
+  "runUrl": null
+}

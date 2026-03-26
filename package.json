@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "npm run cy:run",
-    "test:ci": "npm run cy:run:chrome",
+    "test:ci": "node scripts/run-cypress-ci.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:run:chrome": "cypress run --browser chrome",

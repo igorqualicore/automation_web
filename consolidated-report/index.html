@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard CI Cypress</title>
+  <style>
+    :root {
+      --bg: #f4efe8;
+      --panel: #fffdf9;
+      --panel-strong: #fff8ef;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e8dccd;
+      --accent: #0f766e;
+      --accent-2: #d97706;
+      --healthy: #166534;
+      --healthy-bg: #dcfce7;
+      --danger: #b42318;
+      --danger-bg: #fee4e2;
+      --warning: #b54708;
+      --warning-bg: #fef0c7;
+      --shadow: 0 18px 50px rgba(58, 43, 24, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      background: linear-gradient(180deg, #f8f4ee 0%, #f1e8db 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .hero {
+      background: radial-gradient(circle at top left, #fff7ed 0%, #fffdf9 38%, #f6efe5 100%);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .health-pill {
+      min-width: 220px;
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .health-pill.healthy { background: linear-gradient(135deg, #effdf5 0%, #dcfce7 100%); }
+    .health-pill.warning { background: linear-gradient(135deg, #fff8e8 0%, #fef0c7 100%); }
+    .health-pill.critical { background: linear-gradient(135deg, #fff1f0 0%, #fee4e2 100%); }
+
+    .health-pill span {
+      display: block;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .health-pill strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.5rem;
+    }
+
+    .health-pill small {
+      display: block;
+      margin-top: 8px;
+      color: #51463b;
+      font-size: 0.92rem;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .summary-card.highlight {
+      background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+      color: #f8fafc;
+    }
+
+    .summary-card.highlight span,
+    .summary-card.highlight strong {
+      color: #f8fafc;
+    }
+
+    .severity-bar {
+      display: flex;
+      width: 100%;
+      height: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eadfce;
+      margin-top: 18px;
+    }
+
+    .severity-bar div { height: 100%; }
+    .severity-bar .passed-segment { background: linear-gradient(90deg, #22c55e 0%, #15803d 100%); }
+    .severity-bar .failed-segment { background: linear-gradient(90deg, #ef4444 0%, #b42318 100%); }
+    .severity-bar .unknown-segment { background: linear-gradient(90deg, #f59e0b 0%, #b54708 100%); }
+
+    .severity-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .summary-card,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card { padding: 18px; }
+    .summary-card span,
+    .metrics span,
+    .eyebrow,
+    .log-title {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 1.7rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      background: #d6c2ab;
+    }
+
+    .card.healthy::before { background: linear-gradient(180deg, #22c55e 0%, #166534 100%); }
+    .card.warning::before { background: linear-gradient(180deg, #f59e0b 0%, #b54708 100%); }
+    .card.critical::before { background: linear-gradient(180deg, #ef4444 0%, #b42318 100%); }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      margin: 4px 0 0;
+      font-size: 1.5rem;
+    }
+
+    .subhead {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .badge.passed { background: #dcfce7; color: #166534; }
+    .badge.failed { background: #fee4e2; color: var(--danger); }
+    .badge.unknown { background: #fef0c7; color: var(--warning); }
+
+    .severity {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+    }
+
+    .severity-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .severity-healthy { background: var(--healthy-bg); color: var(--healthy); }
+    .severity-warning { background: var(--warning-bg); color: var(--warning); }
+    .severity-critical { background: var(--danger-bg); color: var(--danger); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metrics div {
+      background: #fcf8f2;
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid #efe3d3;
+    }
+
+    .metrics strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.05rem;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .button {
+      text-decoration: none;
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .button.secondary { background: #0f172a; }
+    .button.ghost { background: #eadfce; color: #3b2f25; }
+
+    .log-block pre {
+      margin: 10px 0 0;
+      padding: 14px;
+      border-radius: 16px;
+      background: #201a17;
+      color: #f9fafb;
+      overflow: auto;
+      min-height: 180px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    @media (max-width: 720px) {
+      .page { padding: 18px 14px 36px; }
+      .hero, .card { padding: 18px; }
+      .hero-top { flex-direction: column; }
+      .health-pill { width: 100%; }
+      .metrics { grid-template-columns: 1fr; }
+      .card-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Dashboard de Execucao Cypress</h1>
+          <p>Visao consolidada da pipeline com os tres ambientes. Cada card mostra status final, duracao, volume de testes, screenshots de falha e acesso direto ao relatorio detalhado e ao log bruto.</p>
+        </div>
+        <aside class="health-pill healthy">
+          <span>Status geral</span>
+          <strong>Execucao saudavel</strong>
+          <small>100% de aprovacao sobre 6 testes executados.</small>
+        </aside>
+      </div>
+
+      <div class="summary">
+        <div class="summary-card highlight"><span>Aprovacao geral</span><strong>100%</strong></div>
+        <div class="summary-card"><span>Ambientes</span><strong>3</strong></div>
+        <div class="summary-card"><span>Passaram</span><strong>3</strong></div>
+        <div class="summary-card"><span>Falharam</span><strong>0</strong></div>
+        <div class="summary-card"><span>Duracao total</span><strong>17s</strong></div>
+      </div>
+
+      <div class="severity-bar" aria-label="Distribuicao por status">
+        <div class="passed-segment" style="width:100%"></div>
+        <div class="failed-segment" style="width:0%"></div>
+        <div class="unknown-segment" style="width:0%"></div>
+      </div>
+
+      <div class="severity-caption">
+        <span>3 ambiente(s) aprovados</span>
+        <span>0 ambiente(s) com falha</span>
+        <span>0 ambiente(s) sem dados</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <section class="card healthy">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Ambiente</p>
+            <h2>macos-latest</h2>
+            <p class="subhead">chrome 146.0.7680.155</p>
+          </div>
+          <span class="badge passed">Passou</span>
+        </div>
+
+        <div class="severity severity-healthy">
+          <span class="severity-dot"></span>
+          <strong>Sem desvios</strong>
+        </div>
+
+        <div class="metrics">
+          <div><span>Duracao</span><strong>6s</strong></div>
+          <div><span>Testes</span><strong>2</strong></div>
+          <div><span>Passed</span><strong>2</strong></div>
+          <div><span>Failed</span><strong>0</strong></div>
+          <div><span>Screenshots</span><strong>0</strong></div>
+        </div>
+
+        <div class="links"><a class="button" href="runs/cypress-artifacts-macos-latest/html/execution-report.html">Relatorio detalhado</a><a class="button secondary" href="runs/cypress-artifacts-macos-latest/logs/terminal.log">Log bruto</a></div>
+
+        <div class="log-block">
+          <p class="log-title">Ultimas linhas do log</p>
+          <pre>│ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     busca-blog.feature                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Start generate report process
+Read and merge jsons from &quot;C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\.jsons&quot;
+Enhance report
+Create HTML report
+HTML report successfully created!
+C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\execution-report.html
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  busca-blog.feature                       00:05        2        2        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        00:05        2        2        -        -        -</pre>
+        </div>
+      </section>
+    
+      <section class="card healthy">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Ambiente</p>
+            <h2>ubuntu-latest</h2>
+            <p class="subhead">chrome 146.0.7680.155</p>
+          </div>
+          <span class="badge passed">Passou</span>
+        </div>
+
+        <div class="severity severity-healthy">
+          <span class="severity-dot"></span>
+          <strong>Sem desvios</strong>
+        </div>
+
+        <div class="metrics">
+          <div><span>Duracao</span><strong>6s</strong></div>
+          <div><span>Testes</span><strong>2</strong></div>
+          <div><span>Passed</span><strong>2</strong></div>
+          <div><span>Failed</span><strong>0</strong></div>
+          <div><span>Screenshots</span><strong>0</strong></div>
+        </div>
+
+        <div class="links"><a class="button" href="runs/cypress-artifacts-ubuntu-latest/html/execution-report.html">Relatorio detalhado</a><a class="button secondary" href="runs/cypress-artifacts-ubuntu-latest/logs/terminal.log">Log bruto</a></div>
+
+        <div class="log-block">
+          <p class="log-title">Ultimas linhas do log</p>
+          <pre>│ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     busca-blog.feature                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Start generate report process
+Read and merge jsons from &quot;C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\.jsons&quot;
+Enhance report
+Create HTML report
+HTML report successfully created!
+C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\execution-report.html
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  busca-blog.feature                       00:05        2        2        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        00:05        2        2        -        -        -</pre>
+        </div>
+      </section>
+    
+      <section class="card healthy">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Ambiente</p>
+            <h2>win32</h2>
+            <p class="subhead">chrome 146.0.7680.155</p>
+          </div>
+          <span class="badge passed">Passou</span>
+        </div>
+
+        <div class="severity severity-healthy">
+          <span class="severity-dot"></span>
+          <strong>Sem desvios</strong>
+        </div>
+
+        <div class="metrics">
+          <div><span>Duracao</span><strong>6s</strong></div>
+          <div><span>Testes</span><strong>2</strong></div>
+          <div><span>Passed</span><strong>2</strong></div>
+          <div><span>Failed</span><strong>0</strong></div>
+          <div><span>Screenshots</span><strong>0</strong></div>
+        </div>
+
+        <div class="links"><a class="button" href="runs/cypress-artifacts-windows-latest/html/execution-report.html">Relatorio detalhado</a><a class="button secondary" href="runs/cypress-artifacts-windows-latest/logs/terminal.log">Log bruto</a></div>
+
+        <div class="log-block">
+          <p class="log-title">Ultimas linhas do log</p>
+          <pre>│ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     busca-blog.feature                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Start generate report process
+Read and merge jsons from &quot;C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\.jsons&quot;
+Enhance report
+Create HTML report
+HTML report successfully created!
+C:\Users\HP\OneDrive\Desktop\automation_test\automation_web\cypress\reports\html\execution-report.html
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  busca-blog.feature                       00:05        2        2        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        00:05        2        2        -        -        -</pre>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
