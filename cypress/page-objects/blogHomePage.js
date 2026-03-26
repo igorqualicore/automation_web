@@ -1,67 +1,41 @@
 class BlogHomePage {
   selectors = {
-    searchToggleButton: '.ast-search-icon',
-    searchField: 'search-field',
+    searchField: '#search-field',
     searchForm: 'form.search-form',
-    searchSubmitButton: 'button.search-submit',
   };
 
   open() {
     cy.visit('/');
   }
 
-  openSearch() {
-    cy.get(this.selectors.searchToggleButton)
-      .should('exist')
-      .click({ force: true });
+  getSearchForm() {
+    return cy.get(this.selectors.searchForm)
+      .first()
+      .should('have.attr', 'method', 'get');
   }
 
   getSearchField() {
-    return cy.getById(this.selectors.searchField)
-      .should('exist')
-      .then(($inputs) => {
-        const visibleInput = [...$inputs].find((input) => Cypress.$(input).is(':visible'));
-
-        return cy.wrap(visibleInput || $inputs[0]);
-      });
+    return this.getSearchForm()
+      .find(this.selectors.searchField)
+      .first()
+      .should('have.attr', 'name', 's');
   }
 
   fillSearchField(term) {
-    this.getSearchField()
-      .then(($input) => {
-        const inputElement = $input[0];
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype,
-          'value',
-        ).set;
+    return this.getSearchField().then(($field) => {
+      $field.val(term);
 
-        nativeInputValueSetter.call(inputElement, '');
-        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-
-        nativeInputValueSetter.call(inputElement, term);
-        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-      });
+      return cy.wrap($field).should('have.value', term);
+    });
   }
 
   submitSearch() {
-    this.getSearchField()
-      .then(($input) => {
-        const formElement = $input[0].form;
-
-        expect(formElement, 'Formulario da busca').to.exist;
-
-        cy.wrap(formElement)
-          .should('have.attr', 'method', 'get')
-          .find(this.selectors.searchSubmitButton)
-          .click({ force: true });
-      });
+    return this.getSearchForm().submit();
   }
 
   searchFor(term) {
-    this.openSearch();
     this.fillSearchField(term);
-    this.submitSearch();
+    return this.submitSearch();
   }
 }
 
