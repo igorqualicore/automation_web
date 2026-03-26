@@ -6,8 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "test": "npm run cy:run",
+    "test:ci": "npm run cy:run:chrome",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
+    "cy:run:chrome": "cypress run --browser chrome",
     "cy:run:headed": "cypress run --headed",
     "cy:run:report": "cypress run --reporter cypress-mochawesome-reporter",
     "report:clean": "node -e \"require('fs').rmSync('cypress/reports',{recursive:true,force:true})\""

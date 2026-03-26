@@ -39,7 +39,7 @@ jobs:
         uses: cypress-io/github-action@v7
         with:
           install-command: npm ci
-          command: npm test
+          command: npm run test:ci
 
       - name: Upload test artifacts
         if: always()
