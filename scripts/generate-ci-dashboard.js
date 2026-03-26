@@ -95,10 +95,10 @@ function buildHtml(runs) {
   const approvalRate = totalTests ? Math.round((totalPassed / totalTests) * 100) : 0;
   const overallStatus = failedCount > 0 ? 'critical' : unknownCount > 0 ? 'warning' : 'healthy';
   const overallLabel = overallStatus === 'critical'
-    ? 'Atencao imediata'
+    ? 'Atenção imediata'
     : overallStatus === 'warning'
-      ? 'Execucao parcial'
-      : 'Execucao saudavel';
+      ? 'Execução parcial'
+      : 'Execução saudável';
   const failedRatio = runs.length ? (failedCount / runs.length) * 100 : 0;
   const passedRatio = runs.length ? (passedCount / runs.length) * 100 : 0;
   const unknownRatio = runs.length ? (unknownCount / runs.length) * 100 : 0;
@@ -107,11 +107,6 @@ function buildHtml(runs) {
     const badgeClass = run.status === 'passed' ? 'passed' : run.status === 'failed' ? 'failed' : 'unknown';
     const statusLabel = run.status === 'passed' ? 'Passou' : run.status === 'failed' ? 'Falhou' : 'Sem dados';
     const severityClass = run.totalFailed > 0 ? 'critical' : run.totalPending > 0 || run.totalSkipped > 0 ? 'warning' : 'healthy';
-    const links = [
-      run.reportLink ? `<a class="button" href="${run.reportLink}">Relatorio detalhado</a>` : '',
-      run.logLink ? `<a class="button secondary" href="${run.logLink}">Log bruto</a>` : '',
-      run.runUrl ? `<a class="button ghost" href="${run.runUrl}">Run no GitHub</a>` : '',
-    ].filter(Boolean).join('');
 
     return `
       <section class="card ${severityClass}">
@@ -130,17 +125,15 @@ function buildHtml(runs) {
         </div>
 
         <div class="metrics">
-          <div><span>Duracao</span><strong>${escapeHtml(formatDuration(run.duration))}</strong></div>
+          <div><span>Duração</span><strong>${escapeHtml(formatDuration(run.duration))}</strong></div>
           <div><span>Testes</span><strong>${escapeHtml(String(run.totalTests))}</strong></div>
-          <div><span>Passed</span><strong>${escapeHtml(String(run.totalPassed))}</strong></div>
-          <div><span>Failed</span><strong>${escapeHtml(String(run.totalFailed))}</strong></div>
+          <div><span>Aprovados</span><strong>${escapeHtml(String(run.totalPassed))}</strong></div>
+          <div><span>Falhos</span><strong>${escapeHtml(String(run.totalFailed))}</strong></div>
           <div><span>Screenshots</span><strong>${escapeHtml(String(run.screenshots))}</strong></div>
         </div>
 
-        <div class="links">${links}</div>
-
         <div class="log-block">
-          <p class="log-title">Ultimas linhas do log</p>
+          <p class="log-title">Últimas linhas do log</p>
           <pre>${escapeHtml(run.logPreview)}</pre>
         </div>
       </section>
@@ -467,38 +460,38 @@ function buildHtml(runs) {
     <section class="hero">
       <div class="hero-top">
         <div>
-          <h1>Dashboard de Execucao Cypress</h1>
-          <p>Visao consolidada da pipeline com os tres ambientes. Cada card mostra status final, duracao, volume de testes, screenshots de falha e acesso direto ao relatorio detalhado e ao log bruto.</p>
+          <h1>Dashboard de Execução Cypress</h1>
+          <p>Visão consolidada da pipeline com os três ambientes. Cada card mostra status final, duração, volume de testes, screenshots de falha e os logs mais recentes da execução.</p>
         </div>
         <aside class="health-pill ${overallStatus}">
           <span>Status geral</span>
           <strong>${overallLabel}</strong>
-          <small>${approvalRate}% de aprovacao sobre ${totalTests} testes executados.</small>
+              <small>${approvalRate}% de aprovação sobre ${totalTests} testes executados.</small>
         </aside>
       </div>
 
       <div class="summary">
-        <div class="summary-card highlight"><span>Aprovacao geral</span><strong>${approvalRate}%</strong></div>
+            <div class="summary-card highlight"><span>Aprovação geral</span><strong>${approvalRate}%</strong></div>
         <div class="summary-card"><span>Ambientes</span><strong>${runs.length}</strong></div>
         <div class="summary-card"><span>Passaram</span><strong>${passedCount}</strong></div>
         <div class="summary-card"><span>Falharam</span><strong>${failedCount}</strong></div>
-        <div class="summary-card"><span>Duracao total</span><strong>${escapeHtml(formatDuration(totalDuration))}</strong></div>
+            <div class="summary-card"><span>Duração total</span><strong>${escapeHtml(formatDuration(totalDuration))}</strong></div>
       </div>
 
-      <div class="severity-bar" aria-label="Distribuicao por status">
+          <div class="severity-bar" aria-label="Distribuição por status">
         <div class="passed-segment" style="width:${passedRatio}%"></div>
         <div class="failed-segment" style="width:${failedRatio}%"></div>
         <div class="unknown-segment" style="width:${unknownRatio}%"></div>
       </div>
 
       <div class="severity-caption">
-        <span>${passedCount} ambiente(s) aprovados</span>
+            <span>${passedCount} ambiente(s) aprovado(s)</span>
         <span>${failedCount} ambiente(s) com falha</span>
         <span>${unknownCount} ambiente(s) sem dados</span>
       </div>
     </section>
 
-    ${runs.length ? `<section class="grid">${cards}</section>` : '<div class="empty">Nenhum artefato de execucao foi encontrado para montar o dashboard.</div>'}
+        ${runs.length ? `<section class="grid">${cards}</section>` : '<div class="empty">Nenhum artefato de execução foi encontrado para montar o dashboard.</div>'}
   </main>
 </body>
 </html>`;
